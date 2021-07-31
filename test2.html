@@ -1,0 +1,127 @@
+<!-- 
+    Author: hesuqun@msn.cn
+
+    for user
+        this script helps archers  note their score on local computer
+        plese change image source based on you own working path, and open the html file in browser
+        please note: the left-upper corner of marker is used to calculate your score
+
+    for developer:
+        an image of the target set on (500px,500px), ring width of 75px is used
+        
+        positioning is done by:
+            var x = e.offsetX || e.layerX, y = e.offsetY || e.layerY;
+
+        x and y are used twice: they are parameters to createMarker, and given to global vars lateral and vertical
+
+    credit: I copy-and-pasted most of the code
+    tables:https://blog.csdn.net/u010658676/article/details/98883260
+    marker:https://ask.csdn.net/questions/384276
+ -->
+
+<style>
+    html,body{margin:0px;height:100%;}
+    #dv{width:1000px;height:1000px;margin:0px auto;}
+    .img {position:absolute;width:10px;height:10px;}
+    .marker{position:absolute;width:10px;height:10px;background:#FFCCFF;}
+    .table{margin-left:1000px;}
+</style>
+<body>
+<button onclick="securePoint()">保存上一箭</button>
+
+<div class="img" id="dv">
+<img src="file:///D:/archive/archive_archery_note/html_raw/a4ce0bcb2a8b540895ca01d7bd0a167e.jpeg"></div>
+
+<div class="table" id = "scoreTable">
+<table id="table">
+    <caption>记录表</caption>
+    <tr>
+        <th>编号</th>
+        <th>距离px</th>
+    </tr>
+</table>
+</div>
+</body>
+
+
+<script>
+    var arrowNumber = 1;
+    var lateral=0; var vertical=0;
+    var scores=new Array();
+
+    function securePoint(){
+        permanentMarker(imgMarker);
+        writeScore(imgMarker);
+    }
+    function createMarker(x, y) {
+        var img = document.getElementById('imgMarker');
+        if (!img) {//不存在创建
+            img = document.createElement('img'); img.id = 'imgMarker'; img.src = '图片地址'; img.className = 'marker';
+            document.getElementById('dv').appendChild(img)
+        }
+        img.style.left = x + 'px'; img.style.top = y + 'px';
+    }
+
+    function permanentMarker(img) {
+        var div = document.createElement('div');
+        div.className = 'marker'; 
+        div.style.left = img.style.left; 
+        div.style.top = img.style.top;
+        div.style.background = '#00FF00';
+        document.getElementById('dv').appendChild(div)
+    }
+
+    function writeScore(img){
+        var dist = Math.sqrt(Math.pow((lateral-500),2)+Math.pow((vertical-500),2));
+
+        if (dist>375){
+            scores[arrowNumber]='m';
+        }
+        else if(dist>337.5){
+            scores[arrowNumber]=1;
+        }
+        else if(dist>300){
+            scores[arrowNumber]=2;
+        }
+        else if(dist>262.5){
+            scores[arrowNumber]=3;
+        }
+        else if(dist>225){
+            scores[arrowNumber]=4;
+        }
+        else if(dist>187.5){
+            scores[arrowNumber]=5;
+        }
+        else if(dist>150){
+            scores[arrowNumber]=6;
+        }
+        else if(dist>112.5){
+            scores[arrowNumber]=7;
+        }
+        else if(dist>75){
+            scores[arrowNumber]=8;
+        }
+        else if(dist>37.5){
+            scores[arrowNumber]=9;
+        }
+        else {
+            scores[arrowNumber]=10;
+        }
+        var table = document.getElementById("table");
+        table.innerHTML += "<tr>\n" +
+            "<td>"+arrowNumber+"</td>\n" +
+            "<td>"+scores[arrowNumber]+
+            "</tr>";0
+        arrowNumber=arrowNumber+1;
+    }
+
+    document.getElementById('dv').onclick = function (e) {
+        e = e || window.event;
+        var x = e.offsetX || e.layerX, y = e.offsetY || e.layerY;
+        lateral =x;
+        vertical =y;
+        createMarker(x, y);
+    }
+</script>
+
+
